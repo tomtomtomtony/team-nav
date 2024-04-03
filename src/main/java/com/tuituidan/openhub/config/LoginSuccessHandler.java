@@ -5,13 +5,17 @@ import com.tuituidan.openhub.bean.entity.User;
 import com.tuituidan.openhub.bean.entity.UserStar;
 import com.tuituidan.openhub.repository.RoleUserRepository;
 import com.tuituidan.openhub.repository.UserStarRepository;
+import com.tuituidan.openhub.util.SecurityUtils;
 import java.io.IOException;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -41,7 +45,15 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
                 .map(UserStar::getCardId).collect(Collectors.toSet()));
         user.setRoleIds(roleUserRepository.findByUserId(user.getId()).stream()
                 .map(RoleUser::getRoleId).collect(Collectors.toSet()));
-        super.onAuthenticationSuccess(request, response, authentication);
+        if (!SecurityUtils.isAdmin(user)) {
+            super.onAuthenticationSuccess(request, response, authentication);
+            return;
+        }
+        Authentication newAuthentication = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(),
+                authentication.getCredentials(),
+                AuthorityUtils.createAuthorityList("admin"));
+        SecurityContextHolder.getContext().setAuthentication(newAuthentication);
+        super.onAuthenticationSuccess(request, response, newAuthentication);
     }
 
 }
