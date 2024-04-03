@@ -1,5 +1,5 @@
 <template>
-  <div class="category-children">
+  <div class="category-children" :class="{'large-layout-container': cardSize==='large'}">
     <div class="card-sm card-md card-xl card-xxl" v-for="card in datas" :key="card.id">
       <el-popover trigger="hover" popper-class="my-popover" :close-delay="0">
         <el-card class="nav-card"
@@ -61,6 +61,7 @@ export default {
   computed: {
     ...mapGetters([
       'cardIconShape',
+      'cardSize',
     ]),
   },
   methods: {
@@ -138,6 +139,20 @@ export default {
   }
 }
 
+.large-layout-container {
+  .card-title {
+    font-size: 16px !important;
+  }
+  .card-content {
+    font-size: 14px !important;
+  }
+  .nav-card-icon{
+    width: 45px !important;
+    height: 45px !important;
+    line-height: 45px !important;
+  }
+}
+
 .card-sm {
   -ms-flex: 0 0 50%;
   flex: 0 0 50%;
@@ -152,6 +167,11 @@ export default {
     flex: 0 0 25%;
     max-width: 25%;
   }
+  .large-layout-container .card-md {
+    -ms-flex: 0 0 33.333333%;
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
 }
 
 
@@ -161,6 +181,11 @@ export default {
     flex: 0 0 20%;
     max-width: 20%;
   }
+  .large-layout-container .card-xl {
+    -ms-flex: 0 0 25%;
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
 }
 
 @media (min-width: 1680px) {
@@ -168,6 +193,11 @@ export default {
     -ms-flex: 0 0 16.666%;
     flex: 0 0 16.666%;
     max-width: 16.666%;
+  }
+  .large-layout-container .card-xxl {
+    -ms-flex: 0 0 20%;
+    flex: 0 0 20%;
+    max-width: 20%;
   }
 }
 

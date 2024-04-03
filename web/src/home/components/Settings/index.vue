@@ -51,7 +51,13 @@
             <el-radio label="circle">圆形</el-radio>
             <el-radio label="square">方形</el-radio>
           </el-radio-group>
-
+        </div>
+        <div class="drawer-item">
+          <span>卡片大小</span>
+          <el-radio-group v-model="cardSize">
+            <el-radio label="small">较小</el-radio>
+            <el-radio label="large">较大</el-radio>
+          </el-radio-group>
         </div>
         <el-button size="small" type="primary" plain icon="el-icon-document-add" @click="saveSetting">保存配置</el-button>
         <el-button size="small" plain icon="el-icon-refresh" @click="resetSetting">重置配置</el-button>
@@ -108,6 +114,17 @@ export default {
         });
       },
     },
+    cardSize: {
+      get() {
+        return this.$store.state.settings.cardSize
+      },
+      set(val) {
+        this.$store.dispatch('settings/changeSetting', {
+          key: 'cardSize',
+          value: val,
+        });
+      },
+    },
   },
   methods: {
     handleTheme(val) {
@@ -125,7 +142,8 @@ export default {
             "sideTheme":"${this.sideTheme}",
             "menuDefaultOpen":"${this.$store.state.settings.menuDefaultOpen}",
             "menuAccordion":"${this.$store.state.settings.menuAccordion}",
-            "cardIconShape":"${this.$store.state.settings.cardIconShape}"
+            "cardIconShape":"${this.$store.state.settings.cardIconShape}",
+            "cardSize":"${this.$store.state.settings.cardSize}"
           }`
       );
       setTimeout(() => this.$modal.closeLoading(), 1000)

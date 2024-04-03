@@ -12,6 +12,7 @@ const state = {
   menuDefaultOpen: storageSetting.menuDefaultOpen === 'true',
   menuAccordion: storageSetting.menuAccordion === 'true',
   cardIconShape: storageSetting.cardIconShape || 'circle',
+  cardSize: storageSetting.cardSize || 'small',
   version: {},
 }
 const mutations = {

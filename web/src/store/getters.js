@@ -8,5 +8,6 @@ const getters = {
   homeMenus: state => state.home.menus,
   homeCards: state => state.home.datas,
   cardIconShape: state => state.settings.cardIconShape,
+  cardSize: state => state.settings.cardSize,
 }
 export default getters
