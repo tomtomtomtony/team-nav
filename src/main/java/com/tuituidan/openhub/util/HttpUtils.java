@@ -7,6 +7,7 @@ import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,6 +28,16 @@ public class HttpUtils {
     private static final String HTTPS = "https";
 
     private static final String HTTP = "http";
+
+    /**
+     * isHttp
+     *
+     * @param url url
+     * @return boolean
+     */
+    public boolean isHttp(String url) {
+        return StringUtils.startsWith(url, HTTP);
+    }
 
     /**
      * isHttps
@@ -120,7 +131,7 @@ public class HttpUtils {
     public static String requestFavicon(String url) {
         byte[] body = HttpUtils.toByteArray(url);
         // 要能实际获取到favicon的数据，如果返回是一个html文件，往往是鉴权导致重定向了
-        if (body != null && !FileExtUtils.isHtml(body)) {
+        if (ArrayUtils.isNotEmpty(body) && !FileExtUtils.isHtml(body)) {
             if (HttpUtils.isHttps(RequestUtils.getRequest())) {
                 return url;
             }
@@ -161,7 +172,7 @@ public class HttpUtils {
             conn.setReadTimeout(HTTP_TIMEOUT);
             return IOUtils.toByteArray(conn);
         } catch (Exception ex) {
-            return null;
+            return ArrayUtils.EMPTY_BYTE_ARRAY;
         } finally {
             IOUtils.close(conn);
         }

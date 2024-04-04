@@ -63,7 +63,8 @@ public class VersionCheckTask {
         }
         versionInfo.setRemoteVersion(remoteVersion);
         ToIntFunction<String> func = version -> Integer.parseInt(version.replaceAll("\\D", ""));
-        versionInfo.setHasNewVersion(func.applyAsInt(versionInfo.getRemoteVersion()) > func.applyAsInt(versionInfo.getCurrentVersion()));
+        versionInfo.setHasNewVersion(func.applyAsInt(versionInfo.getRemoteVersion())
+                > func.applyAsInt(versionInfo.getCurrentVersion()));
     }
 
 }

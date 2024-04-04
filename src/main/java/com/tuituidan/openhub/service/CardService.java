@@ -12,6 +12,7 @@ import com.tuituidan.openhub.bean.vo.HomeDataVo;
 import com.tuituidan.openhub.repository.CardRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
 import com.tuituidan.openhub.util.BeanExtUtils;
+import com.tuituidan.openhub.util.HttpUtils;
 import com.tuituidan.openhub.util.IconUtils;
 import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
@@ -203,7 +204,7 @@ public class CardService {
     }
 
     private void saveIcon(CardIconDto cardIconDto) {
-        if (!StringUtils.startsWith(cardIconDto.getSrc(), "http")) {
+        if (!HttpUtils.isHttp(cardIconDto.getSrc())) {
             return;
         }
         try {

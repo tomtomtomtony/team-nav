@@ -12,10 +12,10 @@ import com.tuituidan.openhub.repository.RoleUserRepository;
 import com.tuituidan.openhub.repository.UserRepository;
 import com.tuituidan.openhub.repository.UserStarRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
+import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +25,7 @@ import javax.persistence.criteria.Predicate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -215,8 +216,9 @@ public class UserService implements UserDetailsService, ApplicationRunner {
      * @param cardIds cardIds
      */
     public void userStarCard(String userId, String[] cardIds) {
-        List<UserStar> exists = userStarRepository.findByUserId(userId);
-        if (CollectionUtils.isEmpty(exists)) {
+        Set<String> existIds = userStarRepository.findByUserId(userId).stream()
+                .map(UserStar::getCardId).collect(Collectors.toSet());
+        if (CollectionUtils.isEmpty(existIds)) {
             if (ArrayUtils.isEmpty(cardIds)) {
                 return;
             }
@@ -224,19 +226,12 @@ public class UserService implements UserDetailsService, ApplicationRunner {
                     .setCardId(cardId).setId(StringExtUtils.getUuid())).collect(Collectors.toList()));
             return;
         }
-        Set<String> existIds = exists.stream().map(UserStar::getCardId).collect(Collectors.toSet());
-        Set<String> saveIds = ArrayUtils.isEmpty(cardIds)
-                ? new HashSet<>() : Arrays.stream(cardIds).collect(Collectors.toSet());
-
-        Set<String> deleteIds = new HashSet<>(existIds);
-        deleteIds.removeAll(saveIds);
-        if (CollectionUtils.isNotEmpty(deleteIds)) {
-            userStarRepository.deleteByUserIdAndCardIdIn(userId, deleteIds);
+        Pair<Set<String>, Set<String>> savePair = ListUtils.compareSaveIds(cardIds, existIds);
+        if (CollectionUtils.isNotEmpty(savePair.getLeft())) {
+            userStarRepository.deleteByUserIdAndCardIdIn(userId, savePair.getLeft());
         }
-        // 要保存的去掉现有的，就是要新增的
-        saveIds.removeAll(existIds);
-        if (CollectionUtils.isNotEmpty(saveIds)) {
-            userStarRepository.saveAll(saveIds.stream().map(cardId -> new UserStar().setUserId(userId)
+        if (CollectionUtils.isNotEmpty(savePair.getRight())) {
+            userStarRepository.saveAll(savePair.getRight().stream().map(cardId -> new UserStar().setUserId(userId)
                     .setCardId(cardId).setId(StringExtUtils.getUuid())).collect(Collectors.toList()));
         }
     }

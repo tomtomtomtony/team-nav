@@ -4,9 +4,11 @@ import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.entity.ISortEntity;
 import com.tuituidan.openhub.bean.vo.TreeData;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +19,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 /**
  * ListUtils.
@@ -51,6 +55,36 @@ public class ListUtils {
     public <T extends TreeData<T>> List<T> buildTree(Collection<T> dataList) {
         Set<String> ids = dataList.stream().map(T::getId).collect(Collectors.toSet());
         return buildTree(dataList, pid -> !ids.contains(pid));
+    }
+
+    /**
+     * 构建树结构
+     *
+     * @param dataList dataList
+     * @param predicate predicate
+     * @param <T> T
+     * @return treeList
+     */
+    private <T extends TreeData<T>> List<T> buildTree(Collection<T> dataList, Predicate<String> predicate) {
+        if (CollectionUtils.isEmpty(dataList)) {
+            return Collections.emptyList();
+        }
+        List<T> treeList = new ArrayList<>();
+        Map<String, List<T>> treeMap = dataList.stream()
+                .filter(item -> StringUtils.isNotBlank(item.getPid()))
+                .collect(Collectors.groupingBy(T::getPid));
+        for (T item : dataList) {
+            if (predicate.test(item.getPid())) {
+                treeList.add(item);
+            }
+            List<T> children = treeMap.get(item.getId());
+            if (CollectionUtils.isNotEmpty(children)) {
+                children.sort(Comparator.comparingInt(T::getSort));
+            }
+            item.setChildren(children);
+        }
+        treeList.sort(Comparator.comparing(T::getSort));
+        return treeList;
     }
 
     /**
@@ -115,33 +149,20 @@ public class ListUtils {
     }
 
     /**
-     * 构建树结构
+     * 拆出要删除的和要插入的
      *
-     * @param dataList dataList
-     * @param predicate predicate
-     * @param <T> T
-     * @return treeList
+     * @param saveIds saveIds
+     * @param existIds existIds
+     * @return Pair
      */
-    private <T extends TreeData<T>> List<T> buildTree(Collection<T> dataList, Predicate<String> predicate) {
-        if (CollectionUtils.isEmpty(dataList)) {
-            return Collections.emptyList();
-        }
-        List<T> treeList = new ArrayList<>();
-        Map<String, List<T>> treeMap = dataList.stream()
-                .filter(item -> StringUtils.isNotBlank(item.getPid()))
-                .collect(Collectors.groupingBy(T::getPid));
-        for (T item : dataList) {
-            if (predicate.test(item.getPid())) {
-                treeList.add(item);
-            }
-            List<T> children = treeMap.get(item.getId());
-            if (CollectionUtils.isNotEmpty(children)) {
-                children.sort(Comparator.comparingInt(T::getSort));
-            }
-            item.setChildren(children);
-        }
-        treeList.sort(Comparator.comparing(T::getSort));
-        return treeList;
+    public Pair<Set<String>, Set<String>> compareSaveIds(String[] saveIds, Set<String> existIds) {
+        Set<String> insertIds = ArrayUtils.isEmpty(saveIds) ? new HashSet<>() :
+                Arrays.stream(saveIds).collect(Collectors.toSet());
+        Set<String> deleteIds = new HashSet<>(existIds);
+        deleteIds.removeAll(insertIds);
+        // 要保存的去掉现有的，就是要新增的
+        insertIds.removeAll(existIds);
+        return Pair.of(deleteIds, insertIds);
     }
 
 }

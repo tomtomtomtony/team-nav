@@ -6,12 +6,12 @@ import com.tuituidan.openhub.bean.vo.AttachmentVo;
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.repository.AttachmentRepository;
 import com.tuituidan.openhub.util.BeanExtUtils;
+import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.ResponseUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +22,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -72,28 +73,21 @@ public class AttachmentService {
      * @param businessId businessId
      */
     public void saveAttachment(String businessId, String[] ids) {
-        List<Attachment> exists = attachmentRepository.findByBusinessIdIn(Collections.singleton(businessId));
-        if (CollectionUtils.isEmpty(exists)) {
+        Set<String> existIds = attachmentRepository.findByBusinessIdIn(Collections.singleton(businessId))
+                .stream().map(Attachment::getId).collect(Collectors.toSet());
+        if (CollectionUtils.isEmpty(existIds)) {
             if (ArrayUtils.isEmpty(ids)) {
                 return;
             }
             this.saveBusinessId(businessId, Arrays.stream(ids).collect(Collectors.toSet()));
             return;
         }
-        Set<String> existIds = exists.stream().map(Attachment::getId).collect(Collectors.toSet());
-        Set<String> saveIds = ArrayUtils.isEmpty(ids)
-                ? new HashSet<>() : Arrays.stream(ids).collect(Collectors.toSet());
-
-        Set<String> deleteIds = new HashSet<>(existIds);
-        // 现有的去掉要保存的，剩下要删除的
-        deleteIds.removeAll(saveIds);
-        if (CollectionUtils.isNotEmpty(deleteIds)) {
-            attachmentRepository.deleteAllById(deleteIds);
+        Pair<Set<String>, Set<String>> savePair = ListUtils.compareSaveIds(ids, existIds);
+        if (CollectionUtils.isNotEmpty(savePair.getLeft())) {
+            attachmentRepository.deleteAllById(savePair.getLeft());
         }
-        // 要保存的去掉现有的，就是要新增的
-        saveIds.removeAll(existIds);
-        if (CollectionUtils.isNotEmpty(saveIds)) {
-            saveBusinessId(businessId, saveIds);
+        if (CollectionUtils.isNotEmpty(savePair.getRight())) {
+            saveBusinessId(businessId, savePair.getRight());
         }
     }
 
