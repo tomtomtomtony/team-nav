@@ -241,7 +241,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.app-container {
-  padding: 0 !important;
-}
+
 </style>

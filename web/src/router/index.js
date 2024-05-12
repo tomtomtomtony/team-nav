@@ -39,11 +39,19 @@ export const routeList = [
     children: [
       {
         path: 'category',
-        component: () => import('@/admin/category/index.vue'),
+        component: () => import('@/admin/category/category-valid.vue'),
       },
       {
-        path: 'card',
+        path: 'category/history',
+        component: () => import('@/admin/category/category-invalid.vue'),
+      },
+      {
+        path: 'card/list',
         component: () => import('@/admin/card/index.vue'),
+      },
+      {
+        path: 'card/apply',
+        component: () => import('@/admin/card/apply.vue'),
       },
       {
         path: 'role',

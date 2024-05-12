@@ -4,7 +4,11 @@
                @toggleClick="toggleSideBar"/>
 
     <div class="right-menu" v-if="version.currentVersion">
-
+      <div class="right-menu-item hover-effect btn-apply" @click="$router.push({path: '/admin/card/apply'})">
+        <el-badge v-if="applyCount!==0" :value="applyCount" :max="99">
+          <i class="el-icon-message-solid" title="申请列表"></i>
+        </el-badge>
+      </div>
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <header-avatar></header-avatar>
@@ -39,10 +43,12 @@ export default {
     ...mapGetters([
       'sidebar',
       'version',
+      'applyCount',
     ]),
   },
   mounted() {
     this.$store.dispatch('settings/loadVersion');
+    this.$store.dispatch('user/refreshApplyCount');
   },
   methods: {
     toggleSideBar() {
@@ -106,6 +112,16 @@ export default {
 
     &:focus {
       outline: none;
+    }
+
+    .btn-apply {
+      margin-right: 10px;
+      padding: 0 12px !important;
+
+      ::v-deep .el-badge__content {
+        top: 7px;
+      }
+
     }
 
     .right-menu-item {

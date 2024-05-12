@@ -8,6 +8,7 @@ import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.service.CardService;
 import java.util.List;
 import javax.annotation.Resource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -53,6 +55,38 @@ public class CardController {
     @GetMapping("/category/{category}/card")
     public ResponseEntity<List<CardVo>> select(@PathVariable("category") String category) {
         return ResponseEntity.ok(cardService.select(category));
+    }
+
+    /**
+     * 查询申请列表数量
+     *
+     * @return List
+     */
+    @GetMapping("/apply/cards/count")
+    public ResponseEntity<Long> countApply() {
+        return ResponseEntity.ok(cardService.countApply());
+    }
+
+    /**
+     * 查询申请列表
+     *
+     * @return List
+     */
+    @GetMapping("/apply/cards")
+    public ResponseEntity<Page<CardVo>> selectApply(@RequestParam Integer pageIndex, @RequestParam Integer pageSize) {
+        return ResponseEntity.ok(cardService.selectApply(pageIndex - 1, pageSize));
+    }
+
+    /**
+     * 通过申请
+     *
+     * @param id id
+     * @return Void
+     */
+    @PatchMapping("/card/{id}/actions/pass_apply")
+    public ResponseEntity<Void> passApply(@PathVariable("id") String[] id) {
+        cardService.passApply(id);
+        return ResponseEntity.noContent().build();
     }
 
     /**

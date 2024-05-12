@@ -1,7 +1,7 @@
 <template>
   <div>
     <span @click="openDialog()"><slot></slot></span>
-    <card-dialog ref="cardDialog"></card-dialog>
+    <card-edit-dialog ref="cardEditDialog"></card-edit-dialog>
   </div>
 </template>
 
@@ -9,11 +9,11 @@
 export default {
   name: "card-apply",
   components: {
-    'card-dialog': () => import("@/admin/card/dialog/index.vue"),
+    'card-edit-dialog': () => import("@/admin/card/dialog/index.vue"),
   },
   methods: {
     openDialog(){
-      this.$refs.cardDialog.open();
+      this.$refs.cardEditDialog.open();
     },
   }
 }

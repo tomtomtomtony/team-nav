@@ -9,6 +9,12 @@ export default {
     'card-icon-select': () => import('@/components/card-icon-select/index.vue'),
     'file-uploader': () => import('@/components/file-uploader/index.vue'),
   },
+  props: {
+    apply: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       // 弹出层标题
@@ -71,14 +77,15 @@ export default {
     open(item = {}) {
       this.resetForm();
       if (item.id) {
-        this.title = '编辑卡片';
+        this.title = this.apply ? '审核卡片' : '编辑卡片';
         this.form = {...item};
         this.form.attachmentIds = Array.isArray(this.form.attachments)
           ? this.form.attachments.map(item => item.id) : [];
-      } else {
-        this.form.type = 'default';
+      } else if (item.category) {
         this.form.category = item.category;
         this.title = '新增卡片';
+      } else {
+        this.title = '申请卡片';
       }
       this.show = true;
       this.$nextTick(() => {
@@ -136,15 +143,19 @@ export default {
           this.$http.save('/api/v1/card', {...this.form})
             .then(() => {
               this.$modal.msgSuccess('保存成功');
-              this.show = this.saveOption.saveKeepAdd;
-              if(!this.saveOption.saveNotClear){
-                this.form.title = '';
-                this.form.content = '';
-                this.form.privateContent = '';
-                this.form.showQrcode = false;
-                this.form.zip = null;
-                this.form.attachmentIds = [];
-                this.form.attachments = [];
+              if (this.form.id) {
+                this.show = false;
+              } else {
+                this.show = this.saveOption.saveKeepAdd;
+                if (!this.saveOption.saveNotClear) {
+                  this.form.title = '';
+                  this.form.content = '';
+                  this.form.privateContent = '';
+                  this.form.showQrcode = false;
+                  this.form.zip = null;
+                  this.form.attachmentIds = [];
+                  this.form.attachments = [];
+                }
               }
               this.$emit('refresh', this.form.category);
             })

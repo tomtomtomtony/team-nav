@@ -9,5 +9,6 @@ const getters = {
   homeCards: state => state.home.datas,
   cardIconShape: state => state.settings.cardIconShape,
   cardSize: state => state.settings.cardSize,
+  applyCount: state => state.user.applyCount,
 }
 export default getters

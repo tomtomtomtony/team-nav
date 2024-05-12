@@ -5,11 +5,13 @@ import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.SortDto;
 import com.tuituidan.openhub.bean.entity.Card;
 import com.tuituidan.openhub.bean.entity.Category;
+import com.tuituidan.openhub.bean.entity.User;
 import com.tuituidan.openhub.bean.vo.AttachmentVo;
 import com.tuituidan.openhub.bean.vo.CardVo;
 import com.tuituidan.openhub.bean.vo.CategoryVo;
 import com.tuituidan.openhub.bean.vo.HomeDataVo;
 import com.tuituidan.openhub.repository.CardRepository;
+import com.tuituidan.openhub.repository.UserRepository;
 import com.tuituidan.openhub.service.cardtype.CardTypeServiceFactory;
 import com.tuituidan.openhub.util.BeanExtUtils;
 import com.tuituidan.openhub.util.HttpUtils;
@@ -18,6 +20,7 @@ import com.tuituidan.openhub.util.ListUtils;
 import com.tuituidan.openhub.util.SecurityUtils;
 import com.tuituidan.openhub.util.StringExtUtils;
 import com.tuituidan.openhub.util.TransactionUtils;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,6 +37,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 /**
@@ -61,6 +67,9 @@ public class CardService {
 
     @Resource
     private AttachmentService attachmentService;
+
+    @Resource
+    private UserRepository userRepository;
 
     /**
      * 首页查询
@@ -140,7 +149,7 @@ public class CardService {
 
     private Map<String, List<CardVo>> getCategoryCardMap(String keywords) {
         List<Card> cards = StringUtils.isBlank(keywords)
-                ? cardRepository.findAll() : cardRepository.findByKeywords(keywords.toLowerCase());
+                ? cardRepository.findByAuditTrue() : cardRepository.findByKeywords(keywords.toLowerCase());
         if (CollectionUtils.isEmpty(cards)) {
             return Collections.emptyMap();
         }
@@ -172,7 +181,7 @@ public class CardService {
      * @return List
      */
     public List<CardVo> select(String category) {
-        List<Card> list = cardRepository.findByCategory(category);
+        List<Card> list = cardRepository.findByAuditTrueAndCategory(category);
         Map<String, List<AttachmentVo>> attachmentMap = attachmentService.getCardAttachmentMap(list);
         return list.stream().map(item -> {
             CardVo vo = BeanExtUtils.convert(item, CardVo::new);
@@ -180,6 +189,41 @@ public class CardService {
             vo.setAttachments(attachmentMap.get(item.getId()));
             return vo;
         }).sorted(Comparator.comparing(CardVo::getSort)).collect(Collectors.toList());
+    }
+
+    /**
+     * countApply
+     *
+     * @return long
+     */
+    public Long countApply() {
+        return cardRepository.countByAuditFalse();
+    }
+
+    /**
+     * 查询申请列表
+     *
+     * @param pageIndex pageIndex
+     * @param pageSize pageSize
+     * @return Page
+     */
+    public Page<CardVo> selectApply(Integer pageIndex, Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by("applyTime").descending());
+        Page<Card> page = cardRepository.findByAuditFalse(pageRequest);
+        if (page.getTotalElements() <= 0) {
+            return page.map(item -> new CardVo());
+        }
+        Map<String, List<AttachmentVo>> attachmentMap = attachmentService.getCardAttachmentMap(page.toList());
+        Map<String, String> userMap =
+                userRepository.findAllById(page.stream().map(Card::getApplyBy).collect(Collectors.toSet()))
+                        .stream().collect(Collectors.toMap(User::getId, User::getNickname));
+        return page.map(item -> {
+            CardVo vo = BeanExtUtils.convert(item, CardVo::new);
+            vo.setCategoryName(categoryService.buildCategoryName(item.getCategory()));
+            vo.setAttachments(attachmentMap.get(item.getId()));
+            vo.setApplyBy(userMap.get(vo.getApplyBy()));
+            return vo;
+        });
     }
 
     /**
@@ -195,6 +239,13 @@ public class CardService {
         cardTypeServiceFactory.getService(card.getType()).supplySave(id, card);
         if (card.getSort() == null) {
             card.setSort(cardRepository.getMaxSort(card.getCategory()) + 1);
+        }
+        if (SecurityUtils.isAdmin(SecurityUtils.getUserInfo())) {
+            card.setAudit(true);
+        } else {
+            card.setAudit(false);
+            card.setApplyBy(SecurityUtils.getId());
+            card.setApplyTime(LocalDateTime.now());
         }
         TransactionUtils.execute(() -> {
             card.setHasAttachment(ArrayUtils.isNotEmpty(cardDto.getAttachmentIds()));
@@ -221,7 +272,7 @@ public class CardService {
      * @param sortDto sortDto
      */
     public void changeSort(String category, SortDto sortDto) {
-        List<Card> cards = cardRepository.findByCategory(category).stream()
+        List<Card> cards = cardRepository.findByAuditTrueAndCategory(category).stream()
                 .sorted(Comparator.comparing(Card::getSort)).collect(Collectors.toList());
         List<Card> saveList = ListUtils.changeSort(cards, sortDto);
         if (CollectionUtils.isEmpty(saveList)) {
@@ -245,6 +296,18 @@ public class CardService {
         for (Card card : cards) {
             cardTypeServiceFactory.getService(card.getType()).supplyDelete(card);
         }
+    }
+
+    /**
+     * 通过申请
+     *
+     * @param id id
+     */
+    public void passApply(String[] id) {
+        List<String> ids = Arrays.asList(id);
+        List<Card> cards = cardRepository.findAllById(ids);
+        cards.forEach(item -> item.setAudit(true));
+        cardRepository.saveAll(cards);
     }
 
 }

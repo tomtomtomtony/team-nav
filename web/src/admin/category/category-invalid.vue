@@ -160,7 +160,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.app-container {
-  padding: 10px;
-}
+
 </style>

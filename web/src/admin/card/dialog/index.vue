@@ -94,9 +94,10 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-checkbox v-model="saveOption.saveKeepAdd">保存后不关闭</el-checkbox>
-      <el-checkbox v-model="saveOption.saveNotClear" style="margin-right: 25px">保存后不清空</el-checkbox>
-      <el-button type="primary" @click="submitForm">保 存</el-button>
+      <el-checkbox v-if="!Boolean(form.id)" v-model="saveOption.saveKeepAdd">保存后不关闭</el-checkbox>
+      <el-checkbox v-if="!Boolean(form.id)" v-model="saveOption.saveNotClear" style="margin-right: 25px">保存后不清空</el-checkbox>
+      <el-button v-if="apply" type="success" @click="submitForm">通 过</el-button>
+      <el-button v-else type="primary" @click="submitForm">保 存</el-button>
       <el-button @click="cancel">取 消</el-button>
     </div>
   </el-dialog>

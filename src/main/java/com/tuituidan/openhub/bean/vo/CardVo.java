@@ -1,7 +1,9 @@
 package com.tuituidan.openhub.bean.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.tuituidan.openhub.bean.dto.CardIconDto;
 import com.tuituidan.openhub.bean.dto.CardZipDto;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,4 +50,9 @@ public class CardVo {
     private List<AttachmentVo> attachments;
 
     private Boolean star;
+
+    private String applyBy;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime applyTime;
 }

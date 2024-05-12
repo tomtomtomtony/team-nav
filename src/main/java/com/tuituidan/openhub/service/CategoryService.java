@@ -75,7 +75,7 @@ public class CategoryService {
         if (CollectionUtils.isEmpty(categories)) {
             return Collections.emptyList();
         }
-        Map<String, Long> countMap = cardRepository.findByCategoryIn(categories.stream()
+        Map<String, Long> countMap = cardRepository.findByAuditTrueAndCategoryIn(categories.stream()
                         .map(Category::getId).collect(Collectors.toList())).stream()
                 .collect(Collectors.groupingBy(Card::getCategory, Collectors.counting()));
         List<CategoryVo> categoryList = categories.stream()
@@ -161,7 +161,7 @@ public class CategoryService {
         if (page.getTotalElements() <= 0) {
             return page.map(item -> new CategoryVo());
         }
-        Map<String, Long> countMap = cardRepository.findByCategoryIn(page.getContent().stream()
+        Map<String, Long> countMap = cardRepository.findByAuditTrueAndCategoryIn(page.getContent().stream()
                         .map(Category::getId).collect(Collectors.toList())).stream()
                 .collect(Collectors.groupingBy(Card::getCategory, Collectors.counting()));
         return page.map(item -> {
@@ -211,7 +211,7 @@ public class CategoryService {
         } else {
             category.setLevel(cacheService.getCategory(category.getPid()).getLevel() + 1);
         }
-        List<Card> cards = cardRepository.findByCategory(category.getPid());
+        List<Card> cards = cardRepository.findByAuditTrueAndCategory(category.getPid());
         TransactionUtils.execute(() -> {
             categoryRepository.save(category);
             roleService.saveCategoryRoles(downCascade(new ArrayList<>(Collections.singletonList(category)))

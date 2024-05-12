@@ -9,15 +9,26 @@ const state = {
     firstname: '',
     isAdmin: false,
     avatar: ''
-  }
+  },
+  applyCount: 0
 }
 
 const mutations = {
   SET_USER_INFO: (state, userInfo) => {
     state.userInfo = userInfo
   },
+  SET_APPLY_COUNT: (state, count) => {
+    state.applyCount = count
+  },
 }
 const actions = {
+  // 更新申请数
+  refreshApplyCount({commit}) {
+    return http.get('/api/v1/apply/cards/count')
+      .then(res => {
+        commit('SET_APPLY_COUNT', res);
+      })
+  },
   // 登录
   Login({commit}, userInfo) {
     const username = userInfo.username.trim()

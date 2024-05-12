@@ -37,12 +37,37 @@ export default {
         {
           path: '/admin/category',
           name: 'category',
-          meta: {title: '分类管理', icon: 'el-icon-menu'}
+          redirect: 'list',
+          meta: {title: '分类管理', icon: 'el-icon-menu'},
+          children: [
+            {
+              path: '',
+              name: 'category-list',
+              meta: {title: '分类列表', icon: 'el-icon-s-operation'}
+            },
+            {
+              path: 'history',
+              name: 'category-history',
+              meta: {title: '历史分类', icon: 'el-icon-video-camera-solid'}
+            },
+          ],
         },
         {
           path: '/admin/card',
           name: 'card',
-          meta: {title: '卡片管理', icon: 'el-icon-s-grid'}
+          meta: {title: '卡片管理', icon: 'el-icon-s-grid'},
+          children: [
+            {
+              path: 'list',
+              name: 'card-list',
+              meta: {title: '卡片列表', icon: 'el-icon-s-promotion'}
+            },
+            {
+              path: 'apply',
+              name: 'card-apply',
+              meta: {title: '申请列表', icon: 'el-icon-message-solid'}
+            },
+          ],
         },
         {
           path: '/admin/role',
