@@ -81,8 +81,15 @@
       <el-table-column label="标题" align="center" prop="title" show-overflow-tooltip/>
       <el-table-column label="内容" align="center" prop="content" show-overflow-tooltip/>
       <el-table-column label="链接" align="center" prop="url" show-overflow-tooltip/>
-      <el-table-column label="操作" align="center" width="140" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="scope">
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-document-copy"
+            @click="openDialog(scope.row, true)"
+          >复制
+          </el-button>
           <el-button
             size="mini"
             type="text"
@@ -137,7 +144,14 @@ export default {
         this.loading = false;
       });
     },
-    openDialog(item) {
+    openDialog(item, isCopy) {
+      if(isCopy){
+        const data = JSON.parse(JSON.stringify(item));
+        data.id = null;
+        data.sort = null;
+        this.$refs.editDialog.open(data);
+        return;
+      }
       this.$refs.editDialog.open(item);
     },
     openSortDialog() {

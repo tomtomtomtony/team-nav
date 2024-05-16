@@ -82,7 +82,7 @@ export default {
         this.form.attachmentIds = Array.isArray(this.form.attachments)
           ? this.form.attachments.map(item => item.id) : [];
       } else if (item.category) {
-        this.form.category = item.category;
+        this.form = {...item};
         this.title = '新增卡片';
       } else {
         this.title = '申请卡片';
