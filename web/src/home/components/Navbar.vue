@@ -4,6 +4,7 @@
                :is-active="sidebar.opened"
                class="hamburger-container" @toggleClick="toggleSideBar"/>
     <el-input
+      ref="refSearchInput"
       class="header-search"
       size="small"
       clearable
@@ -82,6 +83,11 @@ export default {
         })
       }
     },
+  },
+  mounted() {
+    document.addEventListener('keydown', event => {
+      this.$refs.refSearchInput.focus()
+    })
   },
   methods: {
     searchHandler() {
