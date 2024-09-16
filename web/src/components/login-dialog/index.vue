@@ -137,7 +137,7 @@ export default {
             cardIds = [];
           }
         }
-        this.$http.post('/api/v1/quick/login', {...this.form, cardIds: cardIds}).then(() => {
+        this.$http.post(`/api/v1/quick/login?returnUrl=${window.location.href}`, {...this.form, cardIds: cardIds}).then(() => {
           window.location.reload();
           isRelogin.show = false;
           this.show = false;
