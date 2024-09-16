@@ -58,6 +58,9 @@ public class User implements UserDetails, Serializable {
     @Column(name = "status", length = 100)
     private String status;
 
+    @Column(name = "email", length = 100)
+    private String email;
+
     @Column(name = "update_time")
     @UpdateTimestamp
     private LocalDateTime updateTime;

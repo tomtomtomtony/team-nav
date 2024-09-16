@@ -24,6 +24,8 @@ import javax.annotation.Resource;
 import javax.persistence.criteria.Predicate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +35,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -67,6 +70,9 @@ public class UserService implements UserDetailsService, ApplicationRunner {
 
     @Value("${spring.security.user.password}")
     private String defPassword;
+
+    @Resource
+    private EmailSettingService emailSettingService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -143,7 +149,7 @@ public class UserService implements UserDetailsService, ApplicationRunner {
             Assert.isTrue(exitUser == null, "登录账号已存在");
             user = BeanExtUtils.convert(userDto, User::new);
             user.setId(StringExtUtils.getUuid());
-            user.setPassword(new BCryptPasswordEncoder().encode(defPassword));
+            user.setPassword(setPassword(userDto));
         } else {
             user = userRepository.findById(id).orElseThrow(NullPointerException::new);
             Assert.isTrue(exitUser == null || StringUtils.equals(exitUser.getId(), id), "登录账号已存在");
@@ -154,6 +160,19 @@ public class UserService implements UserDetailsService, ApplicationRunner {
                 .map(roleId -> new RoleUser().setId(StringExtUtils.getUuid()).setRoleId(roleId)
                         .setUserId(user.getId())).collect(Collectors.toList()));
         userRepository.save(user);
+    }
+
+    private String setPassword(UserDto userDto) {
+        if (BooleanUtils.isTrue(userDto.getRandomPassword())) {
+            Assert.hasText(userDto.getEmail(), "要使用随机密码请填写邮箱");
+            SimpleMailMessage message = new SimpleMailMessage();
+            String password = RandomStringUtils.randomAlphanumeric(12);
+            message.setText(StringExtUtils.format("您的初始密码为：{}", password));
+            message.setTo(userDto.getEmail());
+            emailSettingService.send(message);
+            return new BCryptPasswordEncoder().encode(password);
+        }
+        return new BCryptPasswordEncoder().encode(defPassword);
     }
 
     /**

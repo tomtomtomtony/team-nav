@@ -32,6 +32,8 @@ public class UserVo implements Serializable {
 
     private String status;
 
+    private String email;
+
     private LocalDateTime updateTime;
 
     private List<Role> roles;

@@ -2,6 +2,7 @@
   <div class="setting-panel">
     <base-setting class="card-style"></base-setting>
     <card-icon-upload class="card-style card-icon-upload-panel"></card-icon-upload>
+    <email-setting class="card-style card-email-panel"></email-setting>
   </div>
 </template>
 
@@ -10,6 +11,7 @@ export default {
   name: "settings-index",
   components: {
     'base-setting': () => import('@/admin/setting/base-setting.vue'),
+    'email-setting': () => import('@/admin/setting/email-setting.vue'),
     'card-icon-upload': () => import('@/admin/setting/card-icon-upload.vue'),
   }
 }
@@ -37,7 +39,10 @@ export default {
 }
 
 .card-icon-upload-panel {
-  flex: auto;
+  width: calc(100% - 500px);
   margin-left: 10px;
+}
+.card-email-panel {
+  margin-top: 10px;
 }
 </style>

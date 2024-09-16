@@ -76,6 +76,8 @@
                        :show-overflow-tooltip="true"/>
       <el-table-column label="用户姓名" align="center" prop="nickname"
                        :show-overflow-tooltip="true"/>
+      <el-table-column label="邮箱" align="center" prop="email"
+                       :show-overflow-tooltip="true"/>
       <el-table-column label="角色" align="center" prop="roles"
                        :show-overflow-tooltip="true">
         <template slot-scope="scope">

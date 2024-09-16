@@ -2,26 +2,46 @@
   <el-dialog :title="title" :visible.sync="show"
              :close-on-click-modal="false"
              width="600px" append-to-body>
-    <el-form ref="form" :model="form" :rules="rules" label-width="80px" @submit.native.prevent>
+    <el-form ref="form" :model="form" :rules="rules" label-width="120px" @submit.native.prevent>
       <el-form-item label="用户姓名" prop="nickname">
-        <el-input v-model="form.nickname" placeholder="请输入用户姓名" maxlength="30" v-trim @blur="nickNameChange"/>
+        <el-input v-model="form.nickname" placeholder="请输入用户姓名" maxlength="100" v-trim @blur="nickNameChange"/>
       </el-form-item>
       <el-form-item label="登录账号" prop="nickname">
-        <el-input v-model="form.username" placeholder="请输入登录账号" maxlength="30" v-trim/>
+        <el-input v-model="form.username" placeholder="请输入登录账号" maxlength="100" v-trim/>
+      </el-form-item>
+      <el-form-item label="邮箱"
+                    :rules="[{required: form.randomPassword, message:'邮箱不能为空', trigger:'blue' }]"
+                    prop="email">
+        <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="100" v-trim/>
       </el-form-item>
       <el-form-item label="所属角色">
         <role-select v-model="form.roleIds"></role-select>
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-radio-group v-model="form.status">
-          <el-radio
-            v-for="dict in statusOptions"
-            :key="dict.id"
-            :label="dict.id"
-          >{{ dict.name }}
-          </el-radio>
-        </el-radio-group>
-      </el-form-item>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="状态" prop="status">
+            <el-radio-group v-model="form.status">
+              <el-radio
+                v-for="dict in statusOptions"
+                :key="dict.id"
+                :label="dict.id"
+              >{{ dict.name }}
+              </el-radio>
+            </el-radio-group>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12" v-if="!form.id">
+          <el-form-item label="密码策略" prop="randomPassword">
+            <span slot="label">
+              密码策略
+              <el-tooltip content='勾选随机密码，会生成随机密码发送到邮箱，未勾选会使用系统默认配置的密码'>
+              <i class="el-icon-question"></i>
+              </el-tooltip>
+            </span>
+            <el-checkbox v-model="form.randomPassword">随机密码</el-checkbox>
+          </el-form-item>
+        </el-col>
+      </el-row>
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -56,6 +76,8 @@ export default {
         id: '',
         nickname: '',
         username: '',
+        email: '',
+        randomPassword: false,
         roleIds: [],
         status: '1',
       },
@@ -79,6 +101,7 @@ export default {
         this.title = '编辑用户';
         this.form = {...item, roleIds: Array.isArray(item.roles) ? item.roles.map(it => (it.id)) : []};
       } else {
+        this.form.randomPassword = true;
         this.title = '新增用户';
       }
       this.show = true;
@@ -88,6 +111,8 @@ export default {
         id: '',
         nickname: '',
         username: '',
+        email: '',
+        randomPassword: false,
         roleIds: [],
         status: '1',
       };
