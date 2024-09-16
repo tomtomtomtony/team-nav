@@ -5,7 +5,7 @@
 
     <div class="right-menu" v-if="version.currentVersion">
       <div class="right-menu-item hover-effect btn-apply" @click="$router.push({path: '/admin/card/apply'})">
-        <el-badge v-if="applyCount!==0" :value="applyCount" :max="99">
+        <el-badge :hidden="applyCount === 0" :value="applyCount" :max="99">
           <i class="el-icon-message-solid" title="申请列表"></i>
         </el-badge>
       </div>
