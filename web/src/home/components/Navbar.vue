@@ -86,7 +86,9 @@ export default {
   },
   mounted() {
     document.addEventListener('keydown', event => {
-      this.$refs.refSearchInput.focus()
+      if (!document.body.className.includes('el-popup-parent--hidden')) {
+        this.$refs.refSearchInput.focus()
+      }
     })
   },
   methods: {
