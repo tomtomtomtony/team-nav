@@ -19,7 +19,7 @@
             plain
             size="small"
             icon="el-icon-plus"
-            @click="openDialog({category: queryParams.category})"
+            @click="openDialog({category: queryParams.category, type: 'default'})"
           >新增
           </el-button>
         </el-col>

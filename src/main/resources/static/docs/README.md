@@ -19,7 +19,7 @@
   - 附件的在线查看和下载。
   - 头部可显示通知公告，支持倒计时模式。
   - 设置常用卡片分类，收藏个人常用网址。
-  - 申请提交卡片（开发中）。
+  - 申请提交卡片。
 - 后台管理
   - 仅支持管理员角色进入后台管理（管理员角色可设置多人），其他人只能通过首页的卡片申请进行卡片添加，由管理员审核后生效。
 - 后台管理-分类管理
@@ -28,6 +28,7 @@
   - 可为卡片分类分配角色，未分配角色为公共分类，对所有人公开，不管登录与否，设置角色后必须登录且有对应角色的人才能看到（人员角色设置下面在角色和用户管理模块中）。
 - 后台管理-卡片管理
   - 卡片基本的增删改查及排序。
+  - 管理员进行卡片审核。
   - 三种卡片类型：
     - 普通卡片：一般的内容型卡片，承载少量信息，可添加链接进行点击跳转。
     - 静态网站：上传发布成静态网站的压缩包（根目录带index.html）。
@@ -47,6 +48,7 @@
 - 后台管理-系统设置
   - 基本设置，包括设置当前网站服务名、LOGO、公告切换时间等设置。
   - 卡片自定义图标上传。
+  - 邮箱设置，用于发送随机密码给新用户
 
 
 ## 在线体验
@@ -85,7 +87,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.1
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.3
 
 ```
 
@@ -122,6 +124,10 @@ location /ext-resources/modules {
 
 ![主题切换](https://github.com/tuituidan/team-nav/assets/20398244/d82720fe-e6e1-4439-9459-493414a433a5)
 
+#### 首页-布局设置
+
+![布局设置](https://github.com/user-attachments/assets/f8b13dec-0894-480a-95f6-d460b452f7ac)
+
 #### 首页-未登录
 
 ![首页-未登录](https://github.com/tuituidan/team-nav/assets/20398244/fa06e4d1-3f3c-4a8e-849e-8825f7da4c62)
@@ -136,7 +142,7 @@ location /ext-resources/modules {
 
 #### 后台管理-卡片添加
 
-![后台管理-卡片添加](https://github.com/tuituidan/team-nav/assets/20398244/bc171c00-4257-4adb-948e-165980e686a7)
+![后台管理-卡片添加](https://github.com/user-attachments/assets/e3a6d15c-eb94-4d44-b8a8-9659f019811f)
 
 #### 后台管理-角色管理
 
@@ -144,7 +150,9 @@ location /ext-resources/modules {
 
 #### 后台管理-用户管理
 
-![后台管理-用户管理](https://github.com/tuituidan/team-nav/assets/20398244/63c389bc-251f-44d5-a768-99105448a47b)
+![后台管理-用户管理-用户添加](https://github.com/user-attachments/assets/8e7c8f06-513d-4794-a0c0-a42cc235fb5f)
+
+![后台管理-用户管理](https://github.com/user-attachments/assets/14e79fc9-e81e-405f-9cb1-2b470f09b85f)
 
 #### 后台管理-通知公告
 
@@ -152,7 +160,7 @@ location /ext-resources/modules {
 
 #### 后台管理-系统设置
 
-![后台管理-系统设置](https://github.com/tuituidan/team-nav/assets/20398244/61645259-7523-42f6-ab08-b2860cb807ae)
+![后台管理-系统设置](https://github.com/user-attachments/assets/2173ca27-a82b-4447-8a30-398f37bf99f1)
 
 
 

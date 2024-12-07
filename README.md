@@ -48,6 +48,7 @@
 - 后台管理-系统设置
   - 基本设置，包括设置当前网站服务名、LOGO、公告切换时间等设置。
   - 卡片自定义图标上传。
+  - 邮箱设置，用于发送随机密码给新用户
 
 
 ## 在线体验
@@ -86,7 +87,7 @@ docker run -d -p 8082:8080 \
 -v /opt/team-nav/database:/database \
 -v /opt/team-nav/ext-resources:/ext-resources \
 -e nav-name="团队导航服务" \
-registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.2
+registry.cn-chengdu.aliyuncs.com/tuituidan/team-nav:2.0.3
 
 ```
 
@@ -123,6 +124,10 @@ location /ext-resources/modules {
 
 ![主题切换](https://github.com/tuituidan/team-nav/assets/20398244/d82720fe-e6e1-4439-9459-493414a433a5)
 
+#### 首页-布局设置
+
+![布局设置](https://github.com/user-attachments/assets/f8b13dec-0894-480a-95f6-d460b452f7ac)
+
 #### 首页-未登录
 
 ![首页-未登录](https://github.com/tuituidan/team-nav/assets/20398244/fa06e4d1-3f3c-4a8e-849e-8825f7da4c62)
@@ -137,7 +142,7 @@ location /ext-resources/modules {
 
 #### 后台管理-卡片添加
 
-![后台管理-卡片添加](https://github.com/tuituidan/team-nav/assets/20398244/bc171c00-4257-4adb-948e-165980e686a7)
+![后台管理-卡片添加](https://github.com/user-attachments/assets/e3a6d15c-eb94-4d44-b8a8-9659f019811f)
 
 #### 后台管理-角色管理
 
@@ -145,7 +150,9 @@ location /ext-resources/modules {
 
 #### 后台管理-用户管理
 
-![后台管理-用户管理](https://github.com/tuituidan/team-nav/assets/20398244/63c389bc-251f-44d5-a768-99105448a47b)
+![后台管理-用户管理-用户添加](https://github.com/user-attachments/assets/8e7c8f06-513d-4794-a0c0-a42cc235fb5f)
+
+![后台管理-用户管理](https://github.com/user-attachments/assets/14e79fc9-e81e-405f-9cb1-2b470f09b85f)
 
 #### 后台管理-通知公告
 
@@ -153,7 +160,7 @@ location /ext-resources/modules {
 
 #### 后台管理-系统设置
 
-![后台管理-系统设置](https://github.com/tuituidan/team-nav/assets/20398244/61645259-7523-42f6-ab08-b2860cb807ae)
+![后台管理-系统设置](https://github.com/user-attachments/assets/2173ca27-a82b-4447-8a30-398f37bf99f1)
 
 
 
