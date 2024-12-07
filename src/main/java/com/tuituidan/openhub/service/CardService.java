@@ -97,7 +97,10 @@ public class CardService {
                 return convert;
             }).getChildren().add(item);
         }
-        rightList.addAll(lowMap.values());
+        for (CategoryVo item : lowMap.values()) {
+            item.getChildren().sort(Comparator.comparing(CategoryVo::getFlatSort));
+            rightList.add(item);
+        }
         Collection<CategoryVo> menus = buildMenus(rightList);
         rightList.sort(Comparator.comparing(CategoryVo::getFlatSort));
         return new HomeDataVo(ListUtils.buildTree(menus), rightList);
