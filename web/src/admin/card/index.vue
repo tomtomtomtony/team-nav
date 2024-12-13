@@ -139,6 +139,10 @@ export default {
   methods: {
     getList() {
       this.loading = true;
+      if (this.queryParams.category==='') {
+        this.loading = false;
+        return;
+      }
       this.$http.get(`/api/v1/category/${this.queryParams.category}/card`).then(res => {
         this.dataList = res;
         this.loading = false;
