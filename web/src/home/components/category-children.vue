@@ -67,7 +67,9 @@ export default {
   methods: {
     cardClickHandler(card) {
       if (card.url) {
-        window.open(card.url);
+        // 页面中引入外网的链接资源，会产生一个新的http请求。为了安全（URL里可能包含用户信息），
+        // 浏览器一般都会给这写请求头加上表示来源的referrer 字段，让目标站判断来源地址
+        window.open(card.url,'_blank','noopener=yes,noreferrer=yes');
       }
     },
     showQrcodeHandler(url) {
