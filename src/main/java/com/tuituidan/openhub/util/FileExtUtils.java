@@ -2,15 +2,22 @@ package com.tuituidan.openhub.util;
 
 import com.tuituidan.openhub.consts.Consts;
 import com.tuituidan.openhub.util.thread.CompletableUtils;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.util.ResourceUtils;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * FileExtUtils.
@@ -87,4 +94,19 @@ public class FileExtUtils {
         }
     }
 
+    public static void createFile(String targetFile) throws IOException {
+        Path fp = Paths.get(targetFile);
+        Files.createDirectories(fp.getParent());
+        Files.createFile(fp);
+    }
+    public static String getTemplateDirectoryFullPath(){
+        String res = Strings.EMPTY;
+        try {
+            res= ResourceUtils.getFile(ResourceUtils.CLASSPATH_URL_PREFIX+"templates").getPath();
+            return res;
+        } catch (FileNotFoundException ex) {
+            log.error("template directory not found");
+        }
+        return res;
+    }
 }
