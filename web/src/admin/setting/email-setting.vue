@@ -4,6 +4,7 @@
       <span>邮箱配置</span>
       <el-button class="btn-save" type="text" @click="saveSetting">保存</el-button>
       <el-button class="btn-save btn-test" type="text" @click="testSetting">测试</el-button>
+      <el-button class="btn-save btn-test" type="text" @click="resetForm">清空</el-button>
     </div>
     <el-form ref="form" :model="form" :rules="rules" label-width="120px" @submit.native.prevent>
       <el-form-item label="邮箱服务地址" prop="host">
@@ -64,6 +65,22 @@ export default {
     this.loadSetting();
   },
   methods: {
+    resetForm() {
+      this.form = {
+        host: '',
+        port: 0,
+        username: '',
+        password: '',
+        protocol:''
+      };
+      this.$nextTick(() => {
+        this.$refs.form.clearValidate();
+      })
+
+      this.$http.patch(`/api/v1/setting/email`, {...this.form})
+        .then(() => {
+        });
+    },
     loadSetting() {
       this.$http.get(`/api/v1/setting/email`)
         .then(res => {
