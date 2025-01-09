@@ -3,6 +3,9 @@
     <div slot="header" class="card-title">
       <span>卡片图标上传
         <com-tip tip="设置卡片图标选择默认图标，文件名用于搜索，须保持唯一"></com-tip>
+        <el-tooltip content="图片裁剪">
+          <i class="el-icon-picture-outline card-icon-add" @click="openIconCropper()"></i>
+        </el-tooltip>
       </span>
     </div>
     <div style="max-height: 325px;overflow: auto">
@@ -14,6 +17,7 @@
                          @edit-name="onEditIconName"
                          :max-count="500"></com-icon-uploader>
     </div>
+    <card-icon-cropper ref="refIconCropper" @uploaded="init"></card-icon-cropper>
   </el-card>
 </template>
 
@@ -23,6 +27,7 @@ export default {
   components: {
     'com-icon-uploader': () => import('@/components/com-icon-uploader/index.vue'),
     'com-tip': () => import('@/components/com-tip/index.vue'),
+    'card-icon-cropper': () => import('@/components/card-icon-cropper/index.vue'),
   },
   data() {
     return {
@@ -53,10 +58,19 @@ export default {
           this.init();
         });
     },
+    openIconCropper() {
+      this.$refs.refIconCropper.open();
+    },
   }
 }
 </script>
 
 <style scoped>
-
+.card-icon-add {
+  color: green;
+  cursor: pointer;
+  margin-left: 15px;
+  vertical-align: -0.1em;
+  font-size: 20px;
+}
 </style>
