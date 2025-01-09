@@ -105,12 +105,11 @@ export default {
         type: 'warning'
       }).then(() => {
         this.$store.dispatch('user/LogOut').then(() => {
+
+
+
+
           this.$store.dispatch('settings/loadVersion');
-          // 跳转到首页并强制刷新
-          //浏览器可能会对静态资源进行缓存，为确保页面从服务器重新加载，在URL中添加一个随机参数
-          // 浏览器会认为这是一个新的请求，从而强制从服务器重新加载页面，而不是使用缓存。
-          const randomParam = Math.random().toString(36).substring(7);
-          window.location.href = `/?reload=${randomParam}`;
 
         })
       }).catch(() => {
