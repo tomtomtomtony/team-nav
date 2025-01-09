@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Properties;
 import javax.annotation.Resource;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.mail.SimpleMailMessage;
@@ -43,6 +44,10 @@ public class EmailSettingService implements ApplicationRunner {
     }
 
     private void initEmailSetting(EmailSetting setting) {
+        if (StringUtils.isBlank(setting.getHost())) {
+            this.javaMailSender = null;
+            return;
+        }
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         sender.setHost(setting.getHost());
         sender.setPort(setting.getPort());
