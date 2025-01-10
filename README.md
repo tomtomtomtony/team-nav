@@ -110,6 +110,36 @@ location /ext-resources/modules {
 }
 ```
 
+#### 数据库支持
+
+默认使用`H2`数据库，同时也支持`mysql`和`postgresql`，相应配置分别参考源码中`application-h2.yml`、`application-mysql.yml`、`application-postgresql.yml`三个配置文件。
+
+```yaml
+# application-mysql.yml
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/team_nav?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+  jpa:
+    database: mysql
+```
+
+```yaml
+# application-postgresql.yml
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://127.0.0.1:5432/team_nav
+    username: root
+    password: 123456
+  jpa:
+    database: postgresql
+```
+
+手动部署方式，修改对应配置文件后通过`spring.profiles.active=mysql/postgresql`即可启用对应配置，`Docker`部署也一样，通过`-e`参数即可替换相应配置。
+
 ## license
 
 100%开源，MIT协议，可自由修改
