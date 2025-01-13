@@ -18,7 +18,8 @@
       <category-children v-else :datas="category.cards"></category-children>
     </div>
     <el-empty v-if="homeCards.length<=0" description="没有任何数据"></el-empty>
-    <el-backtop target=".app-main"></el-backtop>
+<!--    <el-backtop target=".app-main"></el-backtop>-->
+    <RightTool></RightTool>
     <filing-info></filing-info>
   </section>
 </template>
@@ -26,11 +27,13 @@
 <script>
 
 import {mapGetters} from "vuex";
+import RightTool from '@/components/RightTool/index.vue'
 import FilingInfo from '@/components/filing-info/index.vue'
 
 export default {
   name: 'AppMain',
   components: {
+    RightTool,
     FilingInfo,
     'category-children': () => import('@/home/components/category-children.vue'),
   },
