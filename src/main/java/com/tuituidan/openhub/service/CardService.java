@@ -252,8 +252,8 @@ public class CardService {
             card.setApplyTime(LocalDateTime.now());
         }
         TransactionUtils.execute(() -> {
-            cardRepository.save(card);
             card.setHasAttachment(ArrayUtils.isNotEmpty(cardDto.getAttachmentIds()));
+            cardRepository.save(card);
             attachmentService.saveAttachment(card.getId(), cardDto.getAttachmentIds());
         });
     }
