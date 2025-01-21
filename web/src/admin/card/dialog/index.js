@@ -17,7 +17,6 @@ export default {
   },
   data() {
     return {
-
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -39,7 +38,7 @@ export default {
         isNativeTemplate:false,
         attachmentIds: [],
         attachments: [],
-        pageFrom:'fromUpload',
+        pageFrom:'',
       },
       pageOptions: [{
         id: 'fromUpload',
@@ -69,7 +68,6 @@ export default {
       ],
       // 表单校验
       rules: {
-
         category: [
           {required: true, message: "所属分类不能为空", trigger: "blur"}
         ],
@@ -118,9 +116,8 @@ export default {
         isNativeTemplate: false,
         attachmentIds: [],
         attachments: [],
-        pageFrom :'fromUpload',
+        pageFrom :'',
       };
-
       this.$nextTick(() => {
         this.$refs.form.clearValidate();
       })
