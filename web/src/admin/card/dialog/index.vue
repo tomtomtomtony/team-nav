@@ -58,7 +58,7 @@
                   placeholder="请输入内容"/>
       </el-form-item>
       <el-form-item label="链接"
-                    v-if="form.type==='default'"
+                    v-if="form.type==='default' "
                     :rules="[{required: form.showQrcode, message:'链接不能为空', trigger:'blue' }]"
                     prop="url">
         <el-row>
@@ -70,13 +70,25 @@
           </el-col>
         </el-row>
       </el-form-item>
-      <el-form-item label="网站文件" prop="zip" v-else>
-        <file-uploader type="modules"
+      <el-form-item label="网站文件"  v-else>
+        <el-select v-model="form.pageFrom"  value-key="id">
+          <el-option
+            v-for="item in pageOptions"
+            :key="item.id"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        <file-uploader v-if="'fromUpload'===form.pageFrom"  type="modules"
                        accept="application/zip"
                        :file-list="form.zip?[form.zip]:[]"
                        @file-change="zipFileChange"
                        :limit="1">zip压缩包上传
         </file-uploader>
+      </el-form-item>
+      <el-form-item v-if="'generator'===form.pageFrom" label="网站链接">
+        <el-input v-model="form.url" placeholder="原站直达链接"
+                  clearable v-trim />
       </el-form-item>
       <el-form-item class="form-icon-loading" v-if="showFaviconLoading">
         <el-button loading type="text">正在尝试获取该地址的图标</el-button>
@@ -94,6 +106,13 @@
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
+      <el-tooltip placement="top">
+        <div slot="content">
+          允许保存后内容栏完全为空，不使用链接和标题填充
+        </div>
+        <i class="el-icon-question"></i>
+      </el-tooltip>
+      <el-checkbox v-if="!Boolean(form.id)" v-model="saveOption.allowEmpty">保存后内容可空</el-checkbox>
       <el-checkbox v-if="!Boolean(form.id)" v-model="saveOption.saveKeepAdd">保存后不关闭</el-checkbox>
       <el-checkbox v-if="!Boolean(form.id)" v-model="saveOption.saveNotClear" style="margin-right: 25px">保存后不清空</el-checkbox>
       <el-button v-if="apply" type="success" @click="submitForm">通 过</el-button>
