@@ -122,7 +122,7 @@ export default {
 
     .card-content {
       font-size: 13px;
-      color: #0366d6;
+      color: #808080;
       display: block;
       margin-top: 4px;
     }

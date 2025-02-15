@@ -59,7 +59,7 @@
         />
       </template>
       <div class="qr-code-container">
-        <img src="./assets/wechat-qrcode.jpg" alt="微信公众号二维码" class="qr-code" />
+        <img src="./assets/crx-official-account.jpg" alt="微信公众号二维码" class="qr-code" />
         <p>扫描二维码关注公众号</p>
       </div>
     </el-popover>

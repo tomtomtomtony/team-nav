@@ -3,7 +3,7 @@ import http from '@/plugins/http';
 const storageSetting = JSON.parse(localStorage.getItem('layout-setting')) || ''
 const state = {
   title: process.env.VUE_APP_TITLE,
-  sideTheme: storageSetting.sideTheme || 'theme-dark',
+  sideTheme: storageSetting.sideTheme || 'theme-light',
   showSettings: false,
   cutOverSpeed: 10,
   logoPath: '/assets/images/logo.png',
